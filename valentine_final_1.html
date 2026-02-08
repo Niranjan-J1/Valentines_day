@@ -340,79 +340,6 @@
             pointer-events: auto;
         }
 
-        /* Floating Photos Background */
-        .photos-background {
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            overflow: hidden;
-            z-index: 1;
-        }
-
-        .floating-photo {
-            position: absolute;
-            width: 150px;
-            height: 150px;
-            border-radius: 12px;
-            object-fit: cover;
-            opacity: 0;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-            border: 4px solid white;
-            animation: floatPhoto 8s infinite ease-in-out;
-        }
-
-        @keyframes floatPhoto {
-            0% {
-                transform: translateY(110vh) rotate(0deg) scale(0.7);
-                opacity: 0;
-            }
-            5% {
-                opacity: 0.8;
-            }
-            50% {
-                opacity: 1;
-                transform: translateY(50vh) rotate(180deg) scale(1.1);
-            }
-            95% {
-                opacity: 0.8;
-            }
-            100% {
-                transform: translateY(-10vh) rotate(360deg) scale(0.7);
-                opacity: 0;
-            }
-        }
-
-        /* Hearts explosion */
-        .hearts-explosion {
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            pointer-events: none;
-            z-index: 3;
-        }
-
-        .explosion-heart {
-            position: absolute;
-            font-size: 2rem;
-            opacity: 0;
-            animation: explodeHeart 2s ease-out forwards;
-        }
-
-        @keyframes explodeHeart {
-            0% {
-                transform: translate(0, 0) scale(0);
-                opacity: 1;
-            }
-            100% {
-                transform: translate(var(--tx), var(--ty)) scale(1.5);
-                opacity: 0;
-            }
-        }
-
         .valentine-container {
             max-width: 900px;
             margin: 0 auto;
@@ -423,8 +350,6 @@
             justify-content: center;
             align-items: center;
             text-align: center;
-            position: relative;
-            z-index: 2;
         }
 
         .valentine-visual {
@@ -503,7 +428,6 @@
         .valentine-yes {
             background: #000;
             color: white;
-            transition: all 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
         }
 
         .valentine-yes:hover {
@@ -511,53 +435,14 @@
             box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
         }
 
-        .valentine-yes.grow {
-            animation: growButton 0.5s ease-out forwards;
-        }
-
-        @keyframes growButton {
-            0% {
-                transform: scale(1);
-            }
-            50% {
-                transform: scale(1.2) rotate(5deg);
-            }
-            100% {
-                transform: scale(1.3);
-            }
-        }
-
         .valentine-no {
             background: white;
             color: #000;
-            transition: all 0.3s ease;
         }
 
         .valentine-no:hover {
             background: #000;
             color: white;
-        }
-
-        .valentine-no.shrink {
-            animation: shrinkButton 0.3s ease-out forwards;
-        }
-
-        @keyframes shrinkButton {
-            0% {
-                transform: scale(1);
-            }
-            50% {
-                transform: scale(0.8) rotate(-5deg);
-            }
-            100% {
-                transform: scale(0.7);
-            }
-        }
-
-        .valentine-no.tiny {
-            transform: scale(0.3);
-            opacity: 0.3;
-            pointer-events: none;
         }
 
         .response-text {
@@ -673,8 +558,6 @@
 
     <!-- Valentine Screen -->
     <div class="valentine-screen" id="valentineScreen">
-        <div class="photos-background" id="photosBackground"></div>
-        <div class="hearts-explosion" id="heartsExplosion"></div>
         <div class="valentine-container">
             <div class="valentine-visual">
                 <div class="valentine-emoji">💖</div>
@@ -684,64 +567,115 @@
                 Every moment with you is a track I want to replay forever. You make my world brighter, my heart fuller, and my life infinitely better. So here's my question—the most important one.
             </p>
             <div class="valentine-buttons-container">
-                <button class="valentine-btn valentine-yes" id="yesBtn" onclick="answerYes()">YES</button>
-                <button class="valentine-btn valentine-no" id="noBtn" onclick="answerNo()">MAYBE</button>
+                <button class="valentine-btn valentine-yes" onclick="answerYes()">YES</button>
+                <button class="valentine-btn valentine-no" onclick="answerNo()">MAYBE</button>
             </div>
             <div class="response-text" id="responseText"></div>
         </div>
     </div>
 
     <script>
+        /* 
+        ═══════════════════════════════════════════════════════════════════════
+        🎵 PERSONALIZATION GUIDE 🎵
+        ═══════════════════════════════════════════════════════════════════════
+        
+        HOW TO ADD YOUR OWN IMAGES & MUSIC:
+        
+        1. CREATE A FOLDER STRUCTURE:
+           - Create a folder called "assets" in the same location as this HTML file
+           - Inside "assets", create two folders: "images" and "music"
+           
+           Your structure should look like:
+           valentine_final.html
+           assets/
+           ├── images/
+           │   ├── cover.jpg (your album cover photo)
+           │   ├── track1.jpg
+           │   ├── track2.jpg
+           │   ├── track3.jpg
+           │   ├── track4.jpg
+           │   ├── track5.jpg
+           │   └── track6.jpg (for the valentine screen)
+           └── music/
+               ├── track1.mp3
+               ├── track2.mp3
+               ├── track3.mp3
+               ├── track4.mp3
+               └── track5.mp3
+        
+        2. ADD YOUR IMAGES:
+           - Replace the "image" value in each track below with your image path
+           - Example: image: "assets/images/track1.jpg"
+           - For the album cover, scroll down to line ~850 to replace coverImage
+        
+        3. ADD YOUR MUSIC:
+           - Replace the "audio" value in each track below with your music path
+           - Example: audio: "assets/images/track1.mp3"
+           - Supported formats: .mp3, .wav, .m4a
+        
+        4. CUSTOMIZE THE TEXT:
+           - Edit the title, subtitle, date, and description for each memory
+           - Make it personal to your relationship!
+        
+        5. TO RUN THE WEBSITE:
+           - Option A: Just double-click this HTML file to open in your browser
+           - Option B: Use VS Code Live Server extension (right-click → "Open with Live Server")
+           - Option C: Host it online (see hosting guide at the bottom)
+        
+        ═══════════════════════════════════════════════════════════════════════
+        */
+
         const memories = [
             {
                 title: "nikes",
                 subtitle: "The Beginning",
                 date: "where it all started",
-                description: "Etobicoke Olympium... where we kept meeting again and again.",
+                description: "From the very first moment, I knew there was something special about you. This is where our story began.",
                 emoji: "☕",
                 gradient: "linear-gradient(135deg, #c0a080 0%, #d4b896 100%)",
-                image: "assets/images/beginning.jpg",
-                audio: ""
+                image: "assets/images/beginning.jpg", // The beginning photo
+                audio: ""  // Add your audio path here: "assets/music/track1.mp3"
             },
             {
                 title: "ivy",
                 subtitle: "First Sleepover",
                 date: "growing closer",
-                description: "First night you spent with me at Waterloo, ever since then sleeping alone feels like punishment.",
+                description: "Late night talks, shared secrets, and moments that made us closer. This was when I knew you were becoming my person.",
                 emoji: "🌧️",
                 gradient: "linear-gradient(135deg, #89b0ae 0%, #bee3db 100%)",
-                image: "assets/images/first_sleepover.jpg",
-                audio: ""
+                image: "assets/images/first_sleepover.jpg", // First sleepover photo
+                audio: ""  // Add your audio path here: "assets/music/track2.mp3"
             },
             {
                 title: "pink + white",
-                subtitle: "walks at jean",
+                subtitle: "Our Silly Side",
                 date: "being ourselves",
-                description: "I am truly myself when I am with you, I love that we can be retarded with eachother and I love how playful you are - you make me so happy.",
+                description: "You bring out the best version of me. With you, I can be completely myself—silly, playful, and free.",
                 emoji: "🌅",
                 gradient: "linear-gradient(135deg, #ffc9b9 0%, #ffdfdf 100%)",
-                image: "assets/images/monkey.jpg",
-                audio: ""
+                image: "assets/images/Monkey.jpg", // Silly monkey photo
+                audio: ""  // Add your audio path here: "assets/music/track3.mp3"
             },
             {
                 title: "self control",
                 subtitle: "Halloween Together",
                 date: "making memories",
-                description: "Can't forget this day..first time drinking (Mika pressure).. first time seeing you break a roof... first of many halloweens together ",
+                description: "Every adventure with you is unforgettable. From silly costumes to endless laughs, you make every moment magical.",
                 emoji: "🎵",
                 gradient: "linear-gradient(135deg, #a8b5c8 0%, #c8d5e8 100%)",
-                image: "assets/images/halloween.jpg",
-                audio: ""
+                image: "assets/images/Halloween.jpg", // Halloween photo
+                audio: ""  // Add your audio path here: "assets/music/track4.mp3"
             },
             {
                 title: "nights",
                 subtitle: "Toronto Summer",
                 date: "sunshine & smiles",
-                description: "Never knew I could be this happy. Toronto dates was our go to and I loved every second of it. Riverdale park, getting our dark ass pictures at the photo booth and watching you get yelled at by your parents. Smaze.",
+                description: "Summer days with you are my favorite. Your smile lights up everything, and moments like these remind me how lucky I am.",
                 emoji: "🌃",
                 gradient: "linear-gradient(135deg, #2d3561 0%, #c05c7e 100%)",
-                image: "assets/images/torontosummer.jpg",
-                audio: ""
+                image: "assets/images/Torontosummer.jpg", // Toronto summer photo
+                audio: ""  // Add your audio path here: "assets/music/track5.mp3"
             },
             {
                 title: "white ferrari",
@@ -750,30 +684,16 @@
                 description: "Every moment has led us here. Every laugh, every memory has been a verse in our story. And I want to keep writing this with you, forever.",
                 emoji: "✨",
                 gradient: "linear-gradient(135deg, #f8e9d9 0%, #e8d5c4 100%)",
-                image: "assets/images/Ex11.jpg",
-                audio: ""
+                image: "assets/images/Part_.jpg", // Recent photo for Valentine's screen!
+                audio: ""  // Background music for the Valentine's proposal
             }
         ];
 
-        const coverImage = "assets/images/albumcover.jpg";
+        // ALBUM COVER IMAGE - Replace with your photo!
+        const coverImage = "assets/images/albumcover.jpg"; // Your prom photo!
 
-        const valentineBackgroundPhotos = [
-            "assets/images/Ex1.jpg",
-            "assets/images/Ex2.jpg",
-            "assets/images/Ex3.jpg",
-            "assets/images/Ex4.jpg",
-            "assets/images/Ex5.jpg",
-            "assets/images/Ex6.jpg",
-            "assets/images/Ex7.jpg",
-            "assets/images/Ex8.jpg",
-            "assets/images/Ex9.jpg",
-            "assets/images/Ex10.jpg",
-            "assets/images/Ex12.jpg",
-            "assets/images/Ex13.jpg"
-        ];
-
+        // Audio player for background music
         let currentAudio = null;
-        let noClickCount = 0;
 
         function generateTracks() {
             const container = document.getElementById('tracksContainer');
@@ -802,7 +722,9 @@
         }
 
         function enterAlbum() {
+            // Stop any playing audio
             stopAudio();
+            
             document.getElementById('albumScreen').classList.add('fade-out');
             setTimeout(() => {
                 document.getElementById('tracklistScreen').classList.add('active');
@@ -811,14 +733,18 @@
 
         function showMemory(index) {
             const memory = memories[index];
+            
+            // Stop any currently playing audio
             stopAudio();
             
+            // Play audio if available
             if (memory.audio) {
                 playAudio(memory.audio);
             }
             
             document.getElementById('trackInfo').textContent = `Track ${String(index + 1).padStart(2, '0')}`;
             
+            // Load image if available, otherwise show emoji
             const visualEl = document.getElementById('memoryVisual');
             if (memory.image) {
                 visualEl.innerHTML = `<img src="${memory.image}" style="width: 100%; height: 100%; object-fit: cover; position: relative; z-index: 2;" alt="${memory.subtitle}">`;
@@ -830,6 +756,7 @@
             document.getElementById('memoryTitle').textContent = memory.subtitle;
             document.getElementById('memoryDate').textContent = memory.date;
             document.getElementById('memoryDesc').textContent = memory.description;
+            
             document.getElementById('memoryScreen').classList.add('active');
         }
 
@@ -840,8 +767,10 @@
 
         function showValentine() {
             stopAudio();
+            
             document.getElementById('tracklistScreen').classList.remove('active');
             
+            // Load final track image and audio
             const finalMemory = memories[memories.length - 1];
             const valentineVisual = document.querySelector('.valentine-visual');
             
@@ -853,104 +782,29 @@
                 playAudio(finalMemory.audio);
             }
             
-            createFloatingPhotos();
             document.getElementById('valentineScreen').classList.add('active');
-        }
-
-        function createFloatingPhotos() {
-            const container = document.getElementById('photosBackground');
-            container.innerHTML = '';
-            
-            valentineBackgroundPhotos.forEach((photo, index) => {
-                for (let i = 0; i < 3; i++) {
-                    const img = document.createElement('img');
-                    img.src = photo;
-                    img.className = 'floating-photo';
-                    img.style.left = (Math.random() * 90) + '%';
-                    
-                    const baseDelay = (index * 0.6) + (i * 2.5);
-                    img.style.animationDelay = baseDelay + 's';
-                    img.style.animationDuration = (6 + Math.random() * 4) + 's';
-                    
-                    container.appendChild(img);
-                }
-            });
         }
 
         function answerYes() {
             const response = document.getElementById('responseText');
             response.innerHTML = '💕 I love you so much<br>Happy Valentine\'s Day';
             response.classList.add('show');
-            
-            explodeHearts();
-            
-            document.getElementById('yesBtn').style.opacity = '0';
-            document.getElementById('noBtn').style.opacity = '0';
-        }
-
-        function explodeHearts() {
-            const container = document.getElementById('heartsExplosion');
-            const hearts = ['💕', '💖', '💗', '💝', '💘', '❤️', '🤍', '💌'];
-            
-            for (let i = 0; i < 30; i++) {
-                const heart = document.createElement('div');
-                heart.className = 'explosion-heart';
-                heart.textContent = hearts[Math.floor(Math.random() * hearts.length)];
-                
-                const angle = (Math.PI * 2 * i) / 30;
-                const distance = 200 + Math.random() * 200;
-                const tx = Math.cos(angle) * distance + 'px';
-                const ty = Math.sin(angle) * distance + 'px';
-                
-                heart.style.setProperty('--tx', tx);
-                heart.style.setProperty('--ty', ty);
-                heart.style.left = '50%';
-                heart.style.top = '50%';
-                heart.style.animationDelay = (i * 0.05) + 's';
-                
-                container.appendChild(heart);
-                setTimeout(() => heart.remove(), 2000);
-            }
         }
 
         function answerNo() {
-            noClickCount++;
-            
-            const yesBtn = document.getElementById('yesBtn');
-            const noBtn = document.getElementById('noBtn');
             const response = document.getElementById('responseText');
-            
-            yesBtn.classList.add('grow');
-            
-            const newScale = 1 + (noClickCount * 0.3);
-            yesBtn.style.transform = `scale(${newScale})`;
-            
-            if (noClickCount >= 3) {
-                noBtn.classList.add('tiny');
-                response.innerHTML = 'The YES button is calling you... 😊💖';
-                response.classList.add('show');
-            } else {
-                noBtn.classList.add('shrink');
-                setTimeout(() => noBtn.classList.remove('shrink'), 300);
-                
-                const messages = [
-                    'Are you sure? 🥺',
-                    'The YES button looks lonely... 💕',
-                    'Come on, you know you want to say yes! 😊'
-                ];
-                response.innerHTML = messages[noClickCount - 1] || messages[2];
-                response.classList.add('show');
-            }
-            
-            setTimeout(() => yesBtn.classList.remove('grow'), 500);
+            response.innerHTML = 'I knew you couldn\'t resist 😊<br>You\'re stuck with me forever';
+            response.classList.add('show');
         }
 
+        // Audio control functions
         function playAudio(audioPath) {
-            stopAudio();
+            stopAudio(); // Stop any currently playing audio
             currentAudio = new Audio(audioPath);
-            currentAudio.loop = true;
+            currentAudio.loop = true; // Loop the track
             currentAudio.play().catch(err => {
                 console.log('Audio playback failed:', err);
+                // This is normal on some browsers - they require user interaction first
             });
         }
 
@@ -962,6 +816,7 @@
             }
         }
 
+        // Initialize - load album cover image if provided
         function initializeAlbum() {
             if (coverImage) {
                 const placeholder = document.querySelector('.album-image-placeholder');
@@ -969,8 +824,40 @@
             }
         }
 
+        // Run initialization
         generateTracks();
         initializeAlbum();
+
+        /* 
+        ═══════════════════════════════════════════════════════════════════════
+        🚀 HOSTING YOUR WEBSITE
+        ═══════════════════════════════════════════════════════════════════════
+        
+        OPTION 1: LOCAL (Testing)
+        - Just double-click the HTML file to open in your browser
+        - Or use VS Code with Live Server extension
+        
+        OPTION 2: NETLIFY (Recommended - FREE & EASY)
+        1. Go to netlify.com and sign up (free)
+        2. Drag and drop your entire folder (with HTML + assets folder)
+        3. Get a free URL like: yoursite.netlify.app
+        4. You can even get a custom domain!
+        
+        OPTION 3: GITHUB PAGES (FREE)
+        1. Create a GitHub account
+        2. Create a new repository
+        3. Upload your HTML file and assets folder
+        4. Enable GitHub Pages in settings
+        5. Get URL: yourusername.github.io/repository-name
+        
+        OPTION 4: VERCEL (FREE)
+        - Similar to Netlify, drag and drop deployment
+        - Go to vercel.com
+        
+        💡 TIP: Test locally first, then deploy to one of these services!
+        
+        ═══════════════════════════════════════════════════════════════════════
+        */
     </script>
 </body>
 </html>
