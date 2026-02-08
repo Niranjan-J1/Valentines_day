@@ -1,0 +1,863 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>for you</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', 'Arial', sans-serif;
+            background: #fff;
+            overflow-x: hidden;
+            color: #000;
+        }
+
+        /* Album Cover Screen */
+        .album-screen {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: #f8f8f8;
+            transition: opacity 0.8s ease, transform 0.8s ease;
+            z-index: 100;
+            padding: 2rem;
+        }
+
+        .album-screen.fade-out {
+            opacity: 0;
+            transform: scale(0.98);
+            pointer-events: none;
+        }
+
+        .album-container {
+            text-align: center;
+            max-width: 500px;
+            width: 100%;
+        }
+
+        .album-cover-wrapper {
+            background: white;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+        }
+
+        .album-text {
+            font-size: 5rem;
+            font-weight: 700;
+            font-style: italic;
+            color: #000;
+            margin-bottom: 1.5rem;
+            letter-spacing: -3px;
+            line-height: 0.9;
+        }
+
+        .album-image-placeholder {
+            width: 100%;
+            aspect-ratio: 1;
+            background: linear-gradient(135deg, #ffd1dc 0%, #ffb4c8 50%, #ff9eb5 100%);
+            margin-bottom: 1.5rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .placeholder-text {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 6rem;
+            opacity: 0.3;
+        }
+
+        .barcode {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 1rem;
+            margin-top: 1rem;
+            opacity: 0.6;
+        }
+
+        .barcode-lines {
+            display: flex;
+            gap: 2px;
+            height: 40px;
+            align-items: flex-end;
+        }
+
+        .barcode-line {
+            width: 2px;
+            background: #000;
+        }
+
+        .parental {
+            font-size: 0.7rem;
+            font-weight: 700;
+            background: #000;
+            color: white;
+            padding: 0.3rem 0.5rem;
+        }
+
+        .play-button {
+            background: #000;
+            color: white;
+            border: none;
+            padding: 1rem 3rem;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            letter-spacing: 1px;
+        }
+
+        .play-button:hover {
+            background: #333;
+            transform: translateY(-2px);
+        }
+
+        /* Tracklist Screen */
+        .tracklist-screen {
+            min-height: 100vh;
+            background: #fff;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.8s ease;
+            overflow-y: auto;
+            z-index: 90;
+        }
+
+        .tracklist-screen.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .tracklist-container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 4rem 2rem;
+        }
+
+        .tracklist-header {
+            margin-bottom: 4rem;
+            text-align: center;
+        }
+
+        .tracklist-title {
+            font-size: 4rem;
+            font-weight: 700;
+            font-style: italic;
+            margin-bottom: 1rem;
+            letter-spacing: -2px;
+        }
+
+        .tracklist-subtitle {
+            font-size: 1rem;
+            opacity: 0.5;
+            font-weight: 400;
+        }
+
+        .track {
+            padding: 2rem 1rem;
+            border-bottom: 1px solid #e0e0e0;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: grid;
+            grid-template-columns: 60px 1fr 40px;
+            gap: 1.5rem;
+            align-items: center;
+        }
+
+        .track:hover {
+            background: #fafafa;
+            padding-left: 2rem;
+        }
+
+        .track-number {
+            font-size: 1.2rem;
+            opacity: 0.3;
+            font-weight: 500;
+        }
+
+        .track-info {
+            text-align: left;
+        }
+
+        .track-title {
+            font-size: 1.5rem;
+            font-weight: 500;
+            margin-bottom: 0.3rem;
+        }
+
+        .track-subtitle {
+            font-size: 0.95rem;
+            opacity: 0.4;
+        }
+
+        .play-icon {
+            opacity: 0;
+            transition: opacity 0.2s ease;
+            font-size: 1.2rem;
+        }
+
+        .track:hover .play-icon {
+            opacity: 0.4;
+        }
+
+        /* Memory Screen */
+        .memory-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: #fff;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.6s ease;
+            z-index: 110;
+            overflow-y: auto;
+        }
+
+        .memory-screen.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .memory-container {
+            max-width: 700px;
+            margin: 0 auto;
+            padding: 4rem 2rem;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .memory-track-info {
+            font-size: 0.85rem;
+            opacity: 0.4;
+            margin-bottom: 3rem;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+
+        .memory-visual-large {
+            width: 100%;
+            aspect-ratio: 1;
+            background: linear-gradient(135deg, #ffb6c1 0%, #ffa07a 100%);
+            margin-bottom: 3rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .memory-visual-large::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(180deg, transparent 0%, rgba(0,0,0,0.1) 100%);
+        }
+
+        .memory-title-main {
+            font-size: 3rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            letter-spacing: -1px;
+            line-height: 1.1;
+        }
+
+        .memory-date-text {
+            font-size: 1.1rem;
+            opacity: 0.4;
+            margin-bottom: 2rem;
+        }
+
+        .memory-description-text {
+            font-size: 1.25rem;
+            line-height: 1.8;
+            margin-bottom: 3rem;
+            opacity: 0.8;
+        }
+
+        .back-button {
+            background: transparent;
+            color: #000;
+            border: 2px solid #000;
+            padding: 1rem 2.5rem;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            letter-spacing: 1px;
+            align-self: flex-start;
+        }
+
+        .back-button:hover {
+            background: #000;
+            color: white;
+        }
+
+        /* Valentine Screen */
+        .valentine-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: #fff;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 1s ease;
+            z-index: 120;
+            overflow-y: auto;
+        }
+
+        .valentine-screen.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .valentine-container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 4rem 2rem;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+        }
+
+        .valentine-visual {
+            width: 100%;
+            max-width: 600px;
+            aspect-ratio: 1;
+            background: linear-gradient(135deg, #ff6b9d 0%, #ffa07a 50%, #ffb6c1 100%);
+            margin-bottom: 4rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .valentine-emoji {
+            font-size: 15rem;
+            animation: gentlePulse 3s ease-in-out infinite;
+            position: relative;
+            z-index: 2;
+        }
+
+        @keyframes gentlePulse {
+            0%, 100% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.05);
+            }
+        }
+
+        .valentine-visual::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, transparent 0%, rgba(255,255,255,0.2) 100%);
+        }
+
+        .valentine-question-text {
+            font-size: 4.5rem;
+            font-weight: 700;
+            margin-bottom: 2rem;
+            letter-spacing: -2px;
+            line-height: 1.1;
+        }
+
+        .valentine-message-text {
+            font-size: 1.5rem;
+            line-height: 1.8;
+            margin-bottom: 4rem;
+            max-width: 700px;
+            opacity: 0.8;
+        }
+
+        .valentine-buttons-container {
+            display: flex;
+            gap: 1.5rem;
+            margin-bottom: 3rem;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .valentine-btn {
+            padding: 1.3rem 3.5rem;
+            font-size: 1.2rem;
+            border: 2px solid #000;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 500;
+            letter-spacing: 0.5px;
+        }
+
+        .valentine-yes {
+            background: #000;
+            color: white;
+        }
+
+        .valentine-yes:hover {
+            transform: scale(1.05);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+        }
+
+        .valentine-no {
+            background: white;
+            color: #000;
+        }
+
+        .valentine-no:hover {
+            background: #000;
+            color: white;
+        }
+
+        .response-text {
+            font-size: 2rem;
+            font-weight: 500;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.8s ease;
+        }
+
+        .response-text.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        @media (max-width: 768px) {
+            .album-text {
+                font-size: 3.5rem;
+            }
+
+            .tracklist-title {
+                font-size: 2.5rem;
+            }
+
+            .track-title {
+                font-size: 1.2rem;
+            }
+
+            .memory-title-main {
+                font-size: 2rem;
+            }
+
+            .memory-description-text {
+                font-size: 1.1rem;
+            }
+
+            .memory-visual-large {
+                font-size: 6rem;
+            }
+
+            .valentine-question-text {
+                font-size: 2.5rem;
+            }
+
+            .valentine-message-text {
+                font-size: 1.2rem;
+            }
+
+            .valentine-emoji {
+                font-size: 8rem;
+            }
+
+            .valentine-btn {
+                padding: 1rem 2.5rem;
+                font-size: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Album Cover Screen -->
+    <div class="album-screen" id="albumScreen">
+        <div class="album-container">
+            <div class="album-cover-wrapper">
+                <div class="album-text">us</div>
+                <div class="album-image-placeholder">
+                    <div class="placeholder-text">💕</div>
+                </div>
+                <div class="barcode">
+                    <div class="barcode-lines">
+                        <div class="barcode-line" style="height: 30px;"></div>
+                        <div class="barcode-line" style="height: 40px;"></div>
+                        <div class="barcode-line" style="height: 35px;"></div>
+                        <div class="barcode-line" style="height: 40px;"></div>
+                        <div class="barcode-line" style="height: 25px;"></div>
+                        <div class="barcode-line" style="height: 40px;"></div>
+                        <div class="barcode-line" style="height: 35px;"></div>
+                        <div class="barcode-line" style="height: 30px;"></div>
+                    </div>
+                    <div class="parental">LOVE ADVISORY</div>
+                </div>
+            </div>
+            <button class="play-button" onclick="enterAlbum()">PLAY ALBUM</button>
+        </div>
+    </div>
+
+    <!-- Tracklist Screen -->
+    <div class="tracklist-screen" id="tracklistScreen">
+        <div class="tracklist-container">
+            <div class="tracklist-header">
+                <h1 class="tracklist-title">us</h1>
+                <p class="tracklist-subtitle">our story in tracks</p>
+            </div>
+            <div id="tracksContainer">
+                <!-- Tracks generated by JS -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Memory Screen -->
+    <div class="memory-screen" id="memoryScreen">
+        <div class="memory-container">
+            <div class="memory-track-info" id="trackInfo">Track 01</div>
+            <div class="memory-visual-large" id="memoryVisual">
+                <span style="position: relative; z-index: 2;">☕</span>
+            </div>
+            <h2 class="memory-title-main" id="memoryTitle">First Coffee</h2>
+            <p class="memory-date-text" id="memoryDate">The Beginning</p>
+            <p class="memory-description-text" id="memoryDesc">Memory description</p>
+            <button class="back-button" onclick="closeMemory()">BACK</button>
+        </div>
+    </div>
+
+    <!-- Valentine Screen -->
+    <div class="valentine-screen" id="valentineScreen">
+        <div class="valentine-container">
+            <div class="valentine-visual">
+                <div class="valentine-emoji">💖</div>
+            </div>
+            <h1 class="valentine-question-text">Will You Be<br>My Valentine?</h1>
+            <p class="valentine-message-text">
+                Every moment with you is a track I want to replay forever. You make my world brighter, my heart fuller, and my life infinitely better. So here's my question—the most important one.
+            </p>
+            <div class="valentine-buttons-container">
+                <button class="valentine-btn valentine-yes" onclick="answerYes()">YES</button>
+                <button class="valentine-btn valentine-no" onclick="answerNo()">MAYBE</button>
+            </div>
+            <div class="response-text" id="responseText"></div>
+        </div>
+    </div>
+
+    <script>
+        /* 
+        ═══════════════════════════════════════════════════════════════════════
+        🎵 PERSONALIZATION GUIDE 🎵
+        ═══════════════════════════════════════════════════════════════════════
+        
+        HOW TO ADD YOUR OWN IMAGES & MUSIC:
+        
+        1. CREATE A FOLDER STRUCTURE:
+           - Create a folder called "assets" in the same location as this HTML file
+           - Inside "assets", create two folders: "images" and "music"
+           
+           Your structure should look like:
+           valentine_final.html
+           assets/
+           ├── images/
+           │   ├── cover.jpg (your album cover photo)
+           │   ├── track1.jpg
+           │   ├── track2.jpg
+           │   ├── track3.jpg
+           │   ├── track4.jpg
+           │   ├── track5.jpg
+           │   └── track6.jpg (for the valentine screen)
+           └── music/
+               ├── track1.mp3
+               ├── track2.mp3
+               ├── track3.mp3
+               ├── track4.mp3
+               └── track5.mp3
+        
+        2. ADD YOUR IMAGES:
+           - Replace the "image" value in each track below with your image path
+           - Example: image: "assets/images/track1.jpg"
+           - For the album cover, scroll down to line ~850 to replace coverImage
+        
+        3. ADD YOUR MUSIC:
+           - Replace the "audio" value in each track below with your music path
+           - Example: audio: "assets/images/track1.mp3"
+           - Supported formats: .mp3, .wav, .m4a
+        
+        4. CUSTOMIZE THE TEXT:
+           - Edit the title, subtitle, date, and description for each memory
+           - Make it personal to your relationship!
+        
+        5. TO RUN THE WEBSITE:
+           - Option A: Just double-click this HTML file to open in your browser
+           - Option B: Use VS Code Live Server extension (right-click → "Open with Live Server")
+           - Option C: Host it online (see hosting guide at the bottom)
+        
+        ═══════════════════════════════════════════════════════════════════════
+        */
+
+        const memories = [
+            {
+                title: "nikes",
+                subtitle: "The Beginning",
+                date: "where it all started",
+                description: "From the very first moment, I knew there was something special about you. This is where our story began.",
+                emoji: "☕",
+                gradient: "linear-gradient(135deg, #c0a080 0%, #d4b896 100%)",
+                image: "beginning.jpg", // The beginning photo
+                audio: ""  // Add your audio path here: "assets/music/track1.mp3"
+            },
+            {
+                title: "ivy",
+                subtitle: "First Sleepover",
+                date: "growing closer",
+                description: "Late night talks, shared secrets, and moments that made us closer. This was when I knew you were becoming my person.",
+                emoji: "🌧️",
+                gradient: "linear-gradient(135deg, #89b0ae 0%, #bee3db 100%)",
+                image: "First_SleepOver.jpg", // First sleepover photo
+                audio: ""  // Add your audio path here: "assets/music/track2.mp3"
+            },
+            {
+                title: "pink + white",
+                subtitle: "Our Silly Side",
+                date: "being ourselves",
+                description: "You bring out the best version of me. With you, I can be completely myself—silly, playful, and free.",
+                emoji: "🌅",
+                gradient: "linear-gradient(135deg, #ffc9b9 0%, #ffdfdf 100%)",
+                image: "Monkey.jpg", // Silly monkey photo
+                audio: ""  // Add your audio path here: "assets/music/track3.mp3"
+            },
+            {
+                title: "self control",
+                subtitle: "Halloween Together",
+                date: "making memories",
+                description: "Every adventure with you is unforgettable. From silly costumes to endless laughs, you make every moment magical.",
+                emoji: "🎵",
+                gradient: "linear-gradient(135deg, #a8b5c8 0%, #c8d5e8 100%)",
+                image: "Halloween.jpg", // Halloween photo
+                audio: ""  // Add your audio path here: "assets/music/track4.mp3"
+            },
+            {
+                title: "nights",
+                subtitle: "Toronto Summer",
+                date: "sunshine & smiles",
+                description: "Summer days with you are my favorite. Your smile lights up everything, and moments like these remind me how lucky I am.",
+                emoji: "🌃",
+                gradient: "linear-gradient(135deg, #2d3561 0%, #c05c7e 100%)",
+                image: "Toronto_summer.jpg", // Toronto summer photo
+                audio: ""  // Add your audio path here: "assets/music/track5.mp3"
+            },
+            {
+                title: "white ferrari",
+                subtitle: "Us, Right Now",
+                date: "today & forever",
+                description: "Every moment has led us here. Every laugh, every memory has been a verse in our story. And I want to keep writing this with you, forever.",
+                emoji: "✨",
+                gradient: "linear-gradient(135deg, #f8e9d9 0%, #e8d5c4 100%)",
+                image: "Part_.jpg", // Recent photo for Valentine's screen!
+                audio: ""  // Background music for the Valentine's proposal
+            }
+        ];
+
+        // ALBUM COVER IMAGE - Replace with your photo!
+        const coverImage = "albumcover.jpg"; // Your prom photo!
+
+        // Audio player for background music
+        let currentAudio = null;
+
+        function generateTracks() {
+            const container = document.getElementById('tracksContainer');
+            memories.forEach((memory, index) => {
+                const track = document.createElement('div');
+                track.className = 'track';
+                track.onclick = () => {
+                    if (index === memories.length - 1) {
+                        showValentine();
+                    } else {
+                        showMemory(index);
+                    }
+                };
+                
+                track.innerHTML = `
+                    <div class="track-number">${String(index + 1).padStart(2, '0')}</div>
+                    <div class="track-info">
+                        <div class="track-title">${memory.title}</div>
+                        <div class="track-subtitle">${memory.subtitle}</div>
+                    </div>
+                    <div class="play-icon">▶</div>
+                `;
+                
+                container.appendChild(track);
+            });
+        }
+
+        function enterAlbum() {
+            // Stop any playing audio
+            stopAudio();
+            
+            document.getElementById('albumScreen').classList.add('fade-out');
+            setTimeout(() => {
+                document.getElementById('tracklistScreen').classList.add('active');
+            }, 800);
+        }
+
+        function showMemory(index) {
+            const memory = memories[index];
+            
+            // Stop any currently playing audio
+            stopAudio();
+            
+            // Play audio if available
+            if (memory.audio) {
+                playAudio(memory.audio);
+            }
+            
+            document.getElementById('trackInfo').textContent = `Track ${String(index + 1).padStart(2, '0')}`;
+            
+            // Load image if available, otherwise show emoji
+            const visualEl = document.getElementById('memoryVisual');
+            if (memory.image) {
+                visualEl.innerHTML = `<img src="${memory.image}" style="width: 100%; height: 100%; object-fit: cover; position: relative; z-index: 2;" alt="${memory.subtitle}">`;
+            } else {
+                visualEl.innerHTML = `<span style="position: relative; z-index: 2;">${memory.emoji}</span>`;
+            }
+            visualEl.style.background = memory.gradient;
+            
+            document.getElementById('memoryTitle').textContent = memory.subtitle;
+            document.getElementById('memoryDate').textContent = memory.date;
+            document.getElementById('memoryDesc').textContent = memory.description;
+            
+            document.getElementById('memoryScreen').classList.add('active');
+        }
+
+        function closeMemory() {
+            stopAudio();
+            document.getElementById('memoryScreen').classList.remove('active');
+        }
+
+        function showValentine() {
+            stopAudio();
+            
+            document.getElementById('tracklistScreen').classList.remove('active');
+            
+            // Load final track image and audio
+            const finalMemory = memories[memories.length - 1];
+            const valentineVisual = document.querySelector('.valentine-visual');
+            
+            if (finalMemory.image) {
+                valentineVisual.innerHTML = `<img src="${finalMemory.image}" style="width: 100%; height: 100%; object-fit: cover; position: relative; z-index: 2;" alt="Will you be my valentine">`;
+            }
+            
+            if (finalMemory.audio) {
+                playAudio(finalMemory.audio);
+            }
+            
+            document.getElementById('valentineScreen').classList.add('active');
+        }
+
+        function answerYes() {
+            const response = document.getElementById('responseText');
+            response.innerHTML = '💕 I love you so much<br>Happy Valentine\'s Day';
+            response.classList.add('show');
+        }
+
+        function answerNo() {
+            const response = document.getElementById('responseText');
+            response.innerHTML = 'I knew you couldn\'t resist 😊<br>You\'re stuck with me forever';
+            response.classList.add('show');
+        }
+
+        // Audio control functions
+        function playAudio(audioPath) {
+            stopAudio(); // Stop any currently playing audio
+            currentAudio = new Audio(audioPath);
+            currentAudio.loop = true; // Loop the track
+            currentAudio.play().catch(err => {
+                console.log('Audio playback failed:', err);
+                // This is normal on some browsers - they require user interaction first
+            });
+        }
+
+        function stopAudio() {
+            if (currentAudio) {
+                currentAudio.pause();
+                currentAudio.currentTime = 0;
+                currentAudio = null;
+            }
+        }
+
+        // Initialize - load album cover image if provided
+        function initializeAlbum() {
+            if (coverImage) {
+                const placeholder = document.querySelector('.album-image-placeholder');
+                placeholder.innerHTML = `<img src="${coverImage}" style="width: 100%; height: 100%; object-fit: cover;" alt="Album Cover">`;
+            }
+        }
+
+        // Run initialization
+        generateTracks();
+        initializeAlbum();
+
+        /* 
+        ═══════════════════════════════════════════════════════════════════════
+        🚀 HOSTING YOUR WEBSITE
+        ═══════════════════════════════════════════════════════════════════════
+        
+        OPTION 1: LOCAL (Testing)
+        - Just double-click the HTML file to open in your browser
+        - Or use VS Code with Live Server extension
+        
+        OPTION 2: NETLIFY (Recommended - FREE & EASY)
+        1. Go to netlify.com and sign up (free)
+        2. Drag and drop your entire folder (with HTML + assets folder)
+        3. Get a free URL like: yoursite.netlify.app
+        4. You can even get a custom domain!
+        
+        OPTION 3: GITHUB PAGES (FREE)
+        1. Create a GitHub account
+        2. Create a new repository
+        3. Upload your HTML file and assets folder
+        4. Enable GitHub Pages in settings
+        5. Get URL: yourusername.github.io/repository-name
+        
+        OPTION 4: VERCEL (FREE)
+        - Similar to Netlify, drag and drop deployment
+        - Go to vercel.com
+        
+        💡 TIP: Test locally first, then deploy to one of these services!
+        
+        ═══════════════════════════════════════════════════════════════════════
+        */
+    </script>
+</body>
+</html>
