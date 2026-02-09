@@ -681,8 +681,7 @@
             </div>
             <h1 class="valentine-question-text">Will You Be<br>My Valentine?</h1>
             <p class="valentine-message-text">
-                Every moment with you is a track I want to replay forever. You make my world brighter, my heart fuller, and my life infinitely better. So here's my question—the most important one.
-            </p>
+                Every moment with you is a track I want to replay forever. I know we have went through so much together and I am so grateful for every single one of them. I love you miks.
             <div class="valentine-buttons-container">
                 <button class="valentine-btn valentine-yes" id="yesBtn" onclick="answerYes()">YES</button>
                 <button class="valentine-btn valentine-no" id="noBtn" onclick="answerNo()">MAYBE</button>
@@ -697,11 +696,11 @@
                 title: "nikes",
                 subtitle: "The Beginning",
                 date: "where it all started",
-                description: "Etobicoke Olympium... where we kept meeting again and again.",
+                description: "Etobicoke Olympium... where I fell for your majestic 50 free.",
                 emoji: "☕",
                 gradient: "linear-gradient(135deg, #c0a080 0%, #d4b896 100%)",
                 image: "assets/images/beginning.jpg",
-                audio: ""
+                audio: "assets/music/Frank_Ocean_-_Nikes_128k.mp3"
             },
             {
                 title: "ivy",
@@ -711,17 +710,17 @@
                 emoji: "🌧️",
                 gradient: "linear-gradient(135deg, #89b0ae 0%, #bee3db 100%)",
                 image: "assets/images/first_sleepover.jpg",
-                audio: ""
+                audio: "assets/music/Frank_Ocean_-_Ivy_128k.mp3"
             },
             {
                 title: "pink + white",
                 subtitle: "walks at jean",
                 date: "being ourselves",
-                description: "I am truly myself when I am with you, I love that we can be retarded with eachother and I love how playful you are - you make me so happy.",
+                description: "I am truly myself when I am with you, I love that we can be retarded with eachother and I love how playful you are - you make my life infinitely awesomer.",
                 emoji: "🌅",
                 gradient: "linear-gradient(135deg, #ffc9b9 0%, #ffdfdf 100%)",
                 image: "assets/images/monkey.jpg",
-                audio: ""
+                audio: "assets/music/Frank_Ocean_-_Pink_+_White_128k.mp3"
             },
             {
                 title: "self control",
@@ -731,7 +730,7 @@
                 emoji: "🎵",
                 gradient: "linear-gradient(135deg, #a8b5c8 0%, #c8d5e8 100%)",
                 image: "assets/images/halloween.jpg",
-                audio: ""
+                audio: "assets/music/Frank_Ocean_-_Self_Control_128k.mp3"
             },
             {
                 title: "nights",
@@ -741,17 +740,17 @@
                 emoji: "🌃",
                 gradient: "linear-gradient(135deg, #2d3561 0%, #c05c7e 100%)",
                 image: "assets/images/torontosummer.jpg",
-                audio: ""
+                audio: "assets/music/Frank_Ocean_-_Nights_128k.mp3"
             },
             {
                 title: "white ferrari",
                 subtitle: "Us, Right Now",
                 date: "today & forever",
-                description: "Every moment has led us here. Every laugh, every memory has been a verse in our story. And I want to keep writing this with you, forever.",
+                description: "Every moment has led us here. I know we have went through so much together and I am so grateful for every single one of them. You are the only person I could ever want to spend the rest of my life with.",
                 emoji: "✨",
                 gradient: "linear-gradient(135deg, #f8e9d9 0%, #e8d5c4 100%)",
                 image: "assets/images/Ex11.jpg",
-                audio: ""
+                audio: "assets/music/Frank_Ocean_-_White_Ferrari_(Lyrics)_128k.mp3"
             }
         ];
 
@@ -927,16 +926,16 @@
             
             if (noClickCount >= 3) {
                 noBtn.classList.add('tiny');
-                response.innerHTML = 'The YES button is calling you... 😊💖';
+                response.innerHTML = 'wrong button faggot';
                 response.classList.add('show');
             } else {
                 noBtn.classList.add('shrink');
                 setTimeout(() => noBtn.classList.remove('shrink'), 300);
                 
                 const messages = [
-                    'Are you sure? 🥺',
-                    'The YES button looks lonely... 💕',
-                    'Come on, you know you want to say yes! 😊'
+                    'Nice try ',
+                    'Im gonna tell ghannu...',
+                    'JUST SAY YES BRUH'
                 ];
                 response.innerHTML = messages[noClickCount - 1] || messages[2];
                 response.classList.add('show');
